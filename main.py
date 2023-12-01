@@ -40,7 +40,7 @@ class MyApp(App):
                         pos_hint={'center_x': .5, 'center_y': .5},
                         background_color='teal',
                         background_normal='')
-        button.bind(on_press=create_notification())
+        button.bind(on_press=create_notification)
         return button
 # The reason that we don't need an initialization function (def __init__(self)) is because by leaving it out,
         # it calls the default constructor of our kivy app class
