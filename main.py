@@ -40,7 +40,7 @@ class MyApp(App):
                         pos_hint={'center_x': .5, 'center_y': .5},
                         background_color='teal',
                         background_normal='')
-        button.bind(on_press=create_notification)
+        button.bind(on_press=create_notification())
         return button
 # The reason that we don't need an initialization function (def __init__(self)) is because by leaving it out,
         # it calls the default constructor of our kivy app class
@@ -50,6 +50,7 @@ if __name__ == "__main__":
     MyApp().run()
 
 def create_channel():
+    print("Creating Channel now")
     # create an object that represents the sound type of the notification
     sound = cast(Uri, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
     att = AudioAttributesBuilder()
@@ -81,7 +82,7 @@ def create_notification(instance): # instance is for the button press done throu
 
     create_channel()
 
-
+    print("Sending Notification")
     # Set notification sound
     sound = cast(Uri, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
     # Create the notification builder object
@@ -106,4 +107,5 @@ def create_notification(instance): # instance is for the button press done throu
     # Create a notificationcompat manager object to add the new notification
     compatmanager = NotificationManagerCompat.func_from(context)
     # Pass an unique notification_id. This can be used to access the notification
-    compatmanager.notify("notification_id", builder.build())
+    # _______________________ NOTIFICATION ID - "scream_1" _________________________
+    compatmanager.notify("scream_1", builder.build())
