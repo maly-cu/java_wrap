@@ -14,7 +14,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.media.AudioAttributes;
 
-import org.org.myapp.R; // changed appname to myapp
+//import org.org.myapp.R;  changed appname to myapp
 import java.lang.Math;
 
 public class Reminder_Service extends BroadcastReceiver{
@@ -59,7 +59,7 @@ public class Reminder_Service extends BroadcastReceiver{
          int notification_id = (int)(Math.random()*(8000-1+1)+1);
 
          NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "NOTIFICATION")
-                 .setSmallIcon(R.drawable.ic_launcher)
+//                 .setSmallIcon(R.drawable.ic_launcher)
                  .setContentTitle("Your notification title here")
                  .setContentText("Your notification description here")
                  .setTicker("New Notification")
