@@ -1,37 +1,130 @@
 from jnius import autoclass, cast
 from kivy.app import App
 from kivy.uix.button import Button
+import time
+
+# # Gets the current running instance of the app so as to speak
+# mActivity = autoclass("org.kivy.android.PythonActivity").mActivity
+# context = mActivity.getApplicationContext()
+#
+#
+# # Autoclass necessary java classes so they can be used in python
+# RingtoneManager = autoclass("android.media.RingtoneManager")
+# Uri = autoclass("android.net.Uri")
+# AudioAttributesBuilder = autoclass("android.media.AudioAttributes$Builder")
+# AudioAttributes = autoclass("android.media.AudioAttributes")
+# AndroidString = autoclass("java.lang.String")
+# NotificationManager = autoclass("android.app.NotificationManager")
+# NotificationChannel = autoclass("android.app.NotificationChannel")
+# NotificationCompat = autoclass("androidx.core.app.NotificationCompat")
+# NotificationCompatBuilder = autoclass("androidx.core.app.NotificationCompat$Builder")
+# NotificationManagerCompat = autoclass("androidx.core.app.NotificationManagerCompat")
+# func_from = getattr(NotificationManagerCompat, "from")
+#
+# # Unique id for a notification channel. Is used to send notification through
+# # this channel
+# channel_id = AndroidString("Scream_Channel")
+#
+#
+# def create_notification(instance):
+#     pass
+#
+#
+#
+#     def create_channel(self):
+#         print("Creating Channel now")
+#         # create an object that represents the sound type of the notification
+#         sound = cast(Uri, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+#         att = AudioAttributesBuilder()
+#         att.setUsage(AudioAttributes.USAGE_NOTIFICATION)
+#         att.setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+#         att = cast(AudioAttributes, att.build())
+#
+#         # Name of the notification channel
+#         name = cast("java.lang.CharSequence", AndroidString("Scream"))
+#         # Description for the notification channel
+#         description = AndroidString("Sends reminder for user to reapply sunscreen")
+#
+#         # Importance level of the channel
+#         importance = NotificationManager.IMPORTANCE_HIGH
+#
+#         # Create Notification Channel
+#         channel = NotificationChannel(channel_id, name, importance)
+#         channel.setDescription(description)
+#         channel.enableLights(True)
+#         channel.enableVibration(True)
+#         channel.setSound(sound, att)
+#         # Get android's notification manager
+#         notificationManager = context.getSystemService(NotificationManager)
+#         # Register the notification channel
+#         notificationManager.createNotificationChannel(channel)
+#
+#
+#     def create_notification(self, instance): # instance is for the button press done through python, if in kv file, no need
+#
+#         self.create_channel()
+#
+#         print("Sending Notification")
+#         # Set notification sound
+#         sound = cast(Uri, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+#         # Create the notification builder object
+#         builder = NotificationCompatBuilder(context, channel_id)
+#         # Sets the small icon of the notification
+#         builder.setSmallIcon(context.getApplicationInfo().icon)
+#         # Sets the title of the notification
+#         builder.setContentTitle(
+#             cast("java.lang.CharSequence", AndroidString("Notification Title"))
+#         )
+#         # Set text of notification
+#         builder.setContentText(
+#             cast("java.lang.CharSequence", AndroidString("Notification text"))
+#         )
+#         # Set sound
+#         builder.setSound(sound)
+#         # Set priority level of notification
+#         builder.setPriority(NotificationCompat.PRIORITY_HIGH)
+#         # If notification is visble to all users on lockscreen
+#         builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+#
+#         # Create a notificationcompat manager object to add the new notification
+#         compatmanager = NotificationManagerCompat.func_from(context)
+#         # Pass an unique notification_id. This can be used to access the notification
+#         # _______________________ NOTIFICATION ID - "scream_1" _________________________
+#         compatmanager.notify("scream_1", builder.build())
 
 
 # Gets the current running instance of the app so as to speak
 mActivity = autoclass("org.kivy.android.PythonActivity").mActivity
+
 context = mActivity.getApplicationContext()
+Context = autoclass("android.content.Context")
+Intent = autoclass("android.content.Intent")
+PendingIntent = autoclass("android.app.PendingIntent")
+String = autoclass("java.lang.String")
+Int = autoclass("java.lang.Integer")
+AlarmManager = autoclass('android.app.AlarmManager')
 
+intent = Intent()
+intent.setClass(context, Reminder_Service)
+# Here change the "org.org.test" to whatever package domain you have set.
+# Here my buildozer file has the package domain of "org.test".
+# After that "NOTIFY" is the custom action we have set. This custom action is
+# also defined in the manifest file(check README file). You can use any name here
+# just make sure you use the same name while registering the action event
+intent.setAction("org.org.test.REMIND")
+# Create a pending intent to be fired later in time by the alarm Manager
+# Here the intent_id is a variable holding a numeric value that uniquely identifies the
+# pending intent. Keep this id so that you can cancel scheduled alarms later on.
 
-# Autoclass necessary java classes so they can be used in python
-RingtoneManager = autoclass("android.media.RingtoneManager")
-Uri = autoclass("android.net.Uri")
-AudioAttributesBuilder = autoclass("android.media.AudioAttributes$Builder")
-AudioAttributes = autoclass("android.media.AudioAttributes")
-AndroidString = autoclass("java.lang.String")
-NotificationManager = autoclass("android.app.NotificationManager")
-NotificationChannel = autoclass("android.app.NotificationChannel")
-NotificationCompat = autoclass("androidx.core.app.NotificationCompat")
-NotificationCompatBuilder = autoclass("androidx.core.app.NotificationCompat$Builder")
-NotificationManagerCompat = autoclass("androidx.core.app.NotificationManagerCompat")
-func_from = getattr(NotificationManagerCompat, "from")
-
-# Unique id for a notification channel. Is used to send notification through
-# this channel
-channel_id = AndroidString("Scream_Channel")
-
-
-def create_notification(instance):
-    pass
-
+# There are various types of pending intent flags that can be set based on what you want.
+# Here the `FLAG_CANCEL_CURRENT` will cancel any other pending intent with the same id before
+# setting itself.
+pending_intent = PendingIntent.getBroadcast(
+    context, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT
+)
 
 class MyApp(App):
-# The only thing this class will need is a build function
+    # The only thing this class will need is a build function
     def build(self):
         # create_channel()  # putting it in create_notification funtion to see if it'll work
 
@@ -42,70 +135,23 @@ class MyApp(App):
                         background_normal='')
         button.bind(on_press=self.create_notification)
         return button
-# The reason that we don't need an initialization function (def __init__(self)) is because by leaving it out,
-        # it calls the default constructor of our kivy app class
 
+    def create_notification(self):
+        # This gets the current system time since epoch in milliseconds(works only in python 3.7+)
+        ring_time = time.time_ns() // 1_000_000
+        # We now create the alarm and assign it to the system alarm manager. Some methods assign
+        # an alarm manager instance to a variable and then scheduling a task. But if you need to
+        # later cancel this alarm from another python file or from another launch of your app(as
+        # every time you relaunch a kivy the app ,the code is rerun thus creating a new instance of
+        # the alarm manager rather than the one we used before to schedule the alarm). THIS IS IMPORTANT
+        # AS WE NEED TO USE THE SAME ALARM MANAGER INSTANCE TO CANCEL AN ALARM
 
-    def create_channel(self):
-        print("Creating Channel now")
-        # create an object that represents the sound type of the notification
-        sound = cast(Uri, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-        att = AudioAttributesBuilder()
-        att.setUsage(AudioAttributes.USAGE_NOTIFICATION)
-        att.setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-        att = cast(AudioAttributes, att.build())
+        cast(
+            AlarmManager, context.getSystemService(Context.ALARM_SERVICE)
+        ).setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, ring_time, pending_intent)
 
-        # Name of the notification channel
-        name = cast("java.lang.CharSequence", AndroidString("Scream"))
-        # Description for the notification channel
-        description = AndroidString("Sends reminder for user to reapply sunscreen")
+        # Here we use RTC_WAKEUP which uses the real time of the device to figure out when to fire the alarm
 
-        # Importance level of the channel
-        importance = NotificationManager.IMPORTANCE_HIGH
-
-        # Create Notification Channel
-        channel = NotificationChannel(channel_id, name, importance)
-        channel.setDescription(description)
-        channel.enableLights(True)
-        channel.enableVibration(True)
-        channel.setSound(sound, att)
-        # Get android's notification manager
-        notificationManager = context.getSystemService(NotificationManager)
-        # Register the notification channel
-        notificationManager.createNotificationChannel(channel)
-
-
-    def create_notification(self, instance): # instance is for the button press done through python, if in kv file, no need
-
-        self.create_channel()
-
-        print("Sending Notification")
-        # Set notification sound
-        sound = cast(Uri, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-        # Create the notification builder object
-        builder = NotificationCompatBuilder(context, channel_id)
-        # Sets the small icon of the notification
-        builder.setSmallIcon(context.getApplicationInfo().icon)
-        # Sets the title of the notification
-        builder.setContentTitle(
-            cast("java.lang.CharSequence", AndroidString("Notification Title"))
-        )
-        # Set text of notification
-        builder.setContentText(
-            cast("java.lang.CharSequence", AndroidString("Notification text"))
-        )
-        # Set sound
-        builder.setSound(sound)
-        # Set priority level of notification
-        builder.setPriority(NotificationCompat.PRIORITY_HIGH)
-        # If notification is visble to all users on lockscreen
-        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-
-        # Create a notificationcompat manager object to add the new notification
-        compatmanager = NotificationManagerCompat.func_from(context)
-        # Pass an unique notification_id. This can be used to access the notification
-        # _______________________ NOTIFICATION ID - "scream_1" _________________________
-        compatmanager.notify("scream_1", builder.build())
 
 # Finally, we run the app
 if __name__ == "__main__":
