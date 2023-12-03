@@ -138,7 +138,7 @@ class MyApp(App):
         button.bind(on_press=self.create_notification)
         return button
 
-    def create_notification(self):
+    def create_notification(self, instance):
         # This gets the current system time since epoch in milliseconds(works only in python 3.7+)
         ring_time = time.time_ns() // 1_000_000
         # We now create the alarm and assign it to the system alarm manager. Some methods assign
