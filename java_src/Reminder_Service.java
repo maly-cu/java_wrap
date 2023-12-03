@@ -65,7 +65,7 @@ public class Reminder_Service extends BroadcastReceiver{
                  .setTicker("New Notification")
                  .setSound(uri)
                  .setAutoCancel(true)
-                 .setOnlyAlertOnce(false)
+                 .setOnlyAlertOnce(false);
 
          NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
          notificationManager.notify(notification_id,builder.build());
