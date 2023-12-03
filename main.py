@@ -103,6 +103,8 @@ PendingIntent = autoclass("android.app.PendingIntent")
 String = autoclass("java.lang.String")
 Int = autoclass("java.lang.Integer")
 AlarmManager = autoclass('android.app.AlarmManager')
+Reminder_Service = autoclass('org.kivy.android.Reminder_Service')
+
 
 intent = Intent()
 intent.setClass(context, Reminder_Service)
