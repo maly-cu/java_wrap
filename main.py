@@ -95,7 +95,7 @@ import time
 
 # Gets the current running instance of the app so as to speak
 mActivity = autoclass("org.kivy.android.PythonActivity").mActivity
-# Reminder_Service = autoclass('org.kivy.android.Reminder_Service')
+Reminder_Service = autoclass('org.org.myapp.Reminder_Service')
 
 context = mActivity.getApplicationContext()
 Context = autoclass("android.content.Context")
