@@ -141,13 +141,14 @@ class MyApp(App):
             context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT  # FLAG_CANCEL_CURRENT
         )
         # This gets the current system time since epoch in milliseconds(works only in python 3.7+)
-        ring_time = time.time_ns() // 1_000_000 * 9
+        ring_time = (time.time_ns() // 1_000_000) + 120_000  # plus 2 minutes
         # We now create the alarm and assign it to the system alarm manager. Some methods assign
         # an alarm manager instance to a variable and then scheduling a task. But if you need to
         # later cancel this alarm from another python file or from another launch of your app(as
         # every time you relaunch a kivy the app ,the code is rerun thus creating a new instance of
         # the alarm manager rather than the one we used before to schedule the alarm). THIS IS IMPORTANT
         # AS WE NEED TO USE THE SAME ALARM MANAGER INSTANCE TO CANCEL AN ALARM
+        print(f'Ring time is {ring_time} of type {type(ring_time)}')
 
         alarm = cast(
             AlarmManager, context.getSystemService(Context.ALARM_SERVICE)

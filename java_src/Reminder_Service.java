@@ -26,6 +26,8 @@ public class Reminder_Service extends BroadcastReceiver{
     this.createNotificationChannel(context);
     // function to create the notification
     this.sendNotification(context, intent);
+
+    System.out.println("On Receive!");
   }
 
   private void createNotificationChannel(Context context) {
@@ -54,6 +56,8 @@ public class Reminder_Service extends BroadcastReceiver{
     }
 
     private void sendNotification(Context context, Intent intent) {
+         System.out.println("Sending Notification!");
+
          Uri uri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
          //create an unique notification id. Here it is done using random numbers
          int notification_id = (int)(Math.random()*(8000-1+1)+1);
@@ -71,5 +75,8 @@ public class Reminder_Service extends BroadcastReceiver{
          notificationManager.notify(notification_id,builder.build());
      }
 
+//     public static void main(String[] args) {
+//         System.out.println("Hello, World!");
+//     }
 
 }
