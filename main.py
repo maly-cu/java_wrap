@@ -121,6 +121,7 @@ class MyApp(App):
         return button
 
     def create_notification(self, instance):  # instance is for the button press done thru python, if kv file, no need
+        print('NOTIFICATION TRIGGERED')
         intent = Intent()
         intent.setClass(context, Reminder_Service)
         # Here change the "org.org.test" to whatever package domain you have set.
@@ -137,7 +138,7 @@ class MyApp(App):
         # Here the `FLAG_CANCEL_CURRENT` will cancel any other pending intent with the same id before
         # setting itself.
         pending_intent = PendingIntent.getBroadcast(
-            context, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT
+            context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT  # FLAG_CANCEL_CURRENT
         )
         # This gets the current system time since epoch in milliseconds(works only in python 3.7+)
         ring_time = time.time_ns() // 1_000_000 * 2
@@ -148,10 +149,10 @@ class MyApp(App):
         # the alarm manager rather than the one we used before to schedule the alarm). THIS IS IMPORTANT
         # AS WE NEED TO USE THE SAME ALARM MANAGER INSTANCE TO CANCEL AN ALARM
 
-        cast(
+        alarm = cast(
             AlarmManager, context.getSystemService(Context.ALARM_SERVICE)
         ).setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, ring_time, pending_intent)
-
+        print(f'Cast - {alarm}')
         # Here we use RTC_WAKEUP which uses the real time of the device to figure out when to fire the alarm
 
 
