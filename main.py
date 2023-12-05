@@ -141,7 +141,7 @@ class MyApp(App):
             context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT  # FLAG_CANCEL_CURRENT
         )
         # This gets the current system time since epoch in milliseconds(works only in python 3.7+)
-        ring_time = time.time_ns() // 1_000_000 * 2
+        ring_time = time.time_ns() // 1_000_000 * 9
         # We now create the alarm and assign it to the system alarm manager. Some methods assign
         # an alarm manager instance to a variable and then scheduling a task. But if you need to
         # later cancel this alarm from another python file or from another launch of your app(as
