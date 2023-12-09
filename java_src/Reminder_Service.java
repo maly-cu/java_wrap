@@ -1,4 +1,4 @@
-package org.org.myapp;
+package org.test.myapp;
 //The package name of your android app
 
 import android.content.BroadcastReceiver;
@@ -16,7 +16,7 @@ import android.media.AudioAttributes;
 
 //import org.org.myapp.R;  changed appname to myapp
 import java.lang.Math;
-import java.System;
+import java.lang.System;
 
 public class Reminder_Service extends BroadcastReceiver{
 
