@@ -19,18 +19,19 @@ import java.lang.Math;
 
 public class Reminder_Service extends BroadcastReceiver{
 
-  // This function is run when the BroadcastReceiver is fired
-  @Override
-  public void onReceive(Context context, Intent intent) {
+    // This function is run when the BroadcastReceiver is fired
+    @Override
+    public void onReceive(Context context, Intent intent) {
     // function to create notification channel
     this.createNotificationChannel(context);
     // function to create the notification
     this.sendNotification(context, intent);
 
-    System.out.println("On Receive!");
-  }
+    println("On Receive!");
+    System.out.println("Received!");
+    }
 
-  private void createNotificationChannel(Context context) {
+    private void createNotificationChannel(Context context) {
 
         //checks if android version is equal to or above nougat else doesnt do anything
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -63,7 +64,7 @@ public class Reminder_Service extends BroadcastReceiver{
          int notification_id = (int)(Math.random()*(8000-1+1)+1);
 
          NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "NOTIFICATION")
-//                 .setSmallIcon(R.drawable.ic_launcher)
+    //                 .setSmallIcon(R.drawable.ic_launcher)
                  .setContentTitle("Your notification title here")
                  .setContentText("Your notification description here")
                  .setTicker("New Notification")
@@ -74,9 +75,9 @@ public class Reminder_Service extends BroadcastReceiver{
          NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
          notificationManager.notify(notification_id,builder.build());
      }
+}
 
 //     public static void main(String[] args) {
 //         System.out.println("Hello, World!");
 //     }
 
-}
