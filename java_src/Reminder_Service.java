@@ -28,7 +28,6 @@ public class Reminder_Service extends BroadcastReceiver{
     // function to create the notification
     this.sendNotification(context, intent);
 
-    println("On Receive!");
     System.out.println("Received!");
     }
 
