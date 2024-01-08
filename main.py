@@ -1,33 +1,24 @@
-from jnius import autoclass, cast
+import time
+import json
+from datetime import datetime
+
+from jnius import autoclass
+
 from kivy.app import App
 from kivy.uix.button import Button
-import time
+from kivy import platform
+from kivy.logger import Logger
+from kivy.properties import ObjectProperty
+from kivymd.app import MDApp
 
 # Gets the current running instance of the app so as to speak
 mActivity = autoclass("org.kivy.android.PythonActivity").mActivity
 context = mActivity.getApplicationContext()
 
-
 # Autoclass necessary java classes so they can be used in python
-RingtoneManager = autoclass("android.media.RingtoneManager")
-Uri = autoclass("android.net.Uri")
-AudioAttributesBuilder = autoclass("android.media.AudioAttributes$Builder")
-AudioAttributes = autoclass("android.media.AudioAttributes")
-AndroidString = autoclass("java.lang.String")
-NotificationManager = autoclass("android.app.NotificationManager")
-NotificationChannel = autoclass("android.app.NotificationChannel")
-NotificationCompat = autoclass("androidx.core.app.NotificationCompat")
-NotificationCompatBuilder = autoclass("androidx.core.app.NotificationCompat$Builder")
-NotificationManagerCompat = autoclass("androidx.core.app.NotificationManagerCompat")
-func_from = getattr(NotificationManagerCompat, "from")
+PythonActivity = autoclass('org.kivy.android.PythonActivity')
+TaskScheduler = autoclass('org.test.myapp.TaskScheduler')
 
-# Unique id for a notification channel. Is used to send notification through
-# this channel
-channel_id = AndroidString("Scream_Channel")
-
-
-# def create_notification(instance):
-#     pass
 
 class MyApp(App):
     # The only thing this class will need is a build function
@@ -42,66 +33,33 @@ class MyApp(App):
         button.bind(on_press=self.create_notification)
         return button
 
-    def create_channel(self):
-        print("Creating Channel now")
-        # create an object that represents the sound type of the notification
-        sound = cast(Uri, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-        att = AudioAttributesBuilder()
-        att.setUsage(AudioAttributes.USAGE_NOTIFICATION)
-        att.setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-        att = cast(AudioAttributes, att.build())
+    def convert_time_to_millis(time: datetime):
+        """Convert a datetime object to time in milliseconds"""
+        return int(time.timestamp() * 1000)
 
-        # Name of the notification channel
-        name = cast("java.lang.CharSequence", AndroidString("Scream"))
-        # Description for the notification channel
-        description = AndroidString("Sends reminder for user to reapply sunscreen")
+    def schedule_alarm(self, task_time, title='Task title', message='Scheduled Task Activity'):
+        Logger.debug('App: scheduling todo item')
+        if platform == 'android':
+            Logger.info('App: scheduling task')
 
-        # Importance level of the channel
-        importance = NotificationManager.IMPORTANCE_HIGH
+            """
+            Schedules a task by calling the schedule task method of the TaskScheduler class
+            The task itself is to run a service defined in the buildozer.spec file
 
-        # Create Notification Channel
-        channel = NotificationChannel(channel_id, name, importance)
-        channel.setDescription(description)
-        channel.enableLights(True)
-        channel.enableVibration(True)
-        channel.setSound(sound, att)
-        # Get android's notification manager
-        notificationManager = context.getSystemService(NotificationManager)
-        # Register the notification channel
-        notificationManager.createNotificationChannel(channel)
+            The current activity is passed when initializing the class because it is a
+            requirement when using getSystemService() which is required to get the
+            alarm manager.
+            """
+            task_details = {'title': title, 'message': message}
+            python_activity = PythonActivity.mActivity
 
-    def create_notification(self, instance): # instance is for the button press done through python, if in kv file, no need
-
-        self.create_channel()
-
-        print("Sending Notification")
-        # Set notification sound
-        sound = cast(Uri, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-        # Create the notification builder object
-        builder = NotificationCompatBuilder(context, channel_id)
-        # Sets the small icon of the notification
-        builder.setSmallIcon(context.getApplicationInfo().icon)
-        # Sets the title of the notification
-        builder.setContentTitle(
-            cast("java.lang.CharSequence", AndroidString("Notification Title"))
-        )
-        # Set text of notification
-        builder.setContentText(
-            cast("java.lang.CharSequence", AndroidString("Notification text"))
-        )
-        # Set sound
-        builder.setSound(sound)
-        # Set priority level of notification
-        builder.setPriority(NotificationCompat.PRIORITY_HIGH)
-        # If notification is visble to all users on lockscreen
-        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-
-        # Create a notificationcompat manager object to add the new notification
-        compatmanager = NotificationManagerCompat.func_from(context)
-        # Pass an unique notification_id. This can be used to access the notification
-        # _______________________ NOTIFICATION ID - "scream_1" _________________________
-        compatmanager.notify("scream_1", builder.build())
-
+            # task_time = self.convert_time_to_millis(task_time)
+            task_time = (time.time_ns() // 1_000_000) + 120_000
+            task_scheduler = TaskScheduler(python_activity)
+            task_scheduler.scheduleTask(task_time, json.dumps(task_details))
+            # import schedule_task
+            #
+            # schedule_task.schedule_task(self.selected_task_time, title, message)
 
 # # Gets the current running instance of the app so as to speak
 # mActivity = autoclass("org.kivy.android.PythonActivity").mActivity
